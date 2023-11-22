@@ -7,7 +7,7 @@ const db = mysql.createConnection({
     host:"localhost",
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.database,
+    database: process.env.DB_NAME,
     port:3306
 })
 db.connect(()=>{
@@ -45,9 +45,62 @@ function viewEmployees(){
 }
 
 function addEmployee(){
-
+    db.query("SELECT id as value, title as name from role", (err,roleData)=>{
+        db.query("SELECT id as value, CONCAT(first_name,' ',last_name) as name FROM employee WHERE manager_id is null", (err, managerData)=>{
+            inquirer.prompt([
+                {
+                    type: "input",
+                    message: "What is new employee first name?",
+                    name: "first_name"
+                },
+                {
+                    type: "input",
+                    message: "What is new employee last name?",
+                    name: "last_name"
+                },
+                {
+                    type: "list",
+                    message: "Choose the following title:",
+                    name: "role_id",
+                    choices: roleData
+                },
+                {
+                    type: "list",
+                    message: "Choose the following manager:",
+                    name: "manager_id",
+                    choices: managerData
+                }
+            ]).then(answer=>{
+                db.query("INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES(?,?,?,?)",[answer.first_name,answer.last_name,answer.role_id,answer.manager_id],err=>{
+                    viewEmployees()
+                })
+            })
+        })
+    })
 }
 
 function updateEmployeeRole(){
-
+    db.query("SELECT id as value, title as name from role", (err,roleData)=>{
+        db.query("SELECT id as value, CONCAT(first_name,' ',last_name) as name FROM employee", (err, employeeData)=>{
+            inquirer.prompt([
+                
+                {
+                    type: "list",
+                    message: "Choose the following title:",
+                    name: "role_id",
+                    choices: roleData
+                },
+                {
+                    type: "list",
+                    message: "Choose the following employee:",
+                    name: "employee_id",
+                    choices: employeeData
+                }
+            ]).then(answer=>{
+                db.query("UPDATE employee SET role_id=? WHERE id=?",[answer.role_id,answer.employee_id],err=>{
+                    viewEmployees()
+                })
+            })
+        })
+    })
 }
