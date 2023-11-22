@@ -14,7 +14,7 @@ VALUES ("Sales Lead", 100000,1),
        ("Account Manager",160000,3),
        ("Accountant", 125000,3),
        ("Legal Team Lead",250000,4),
-       ("Layer",190000,4);
+       ("Lawyer",190000,4);
 
 INSERT INTO employee (first_name,last_name,role_id)
 VALUES ("John","Doe",1),

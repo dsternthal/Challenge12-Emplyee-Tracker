@@ -29,6 +29,14 @@ function mainMenu(){
             addEmployee()
         }else if(answer.selection==="update an employee role"){
             updateEmployeeRole()
+        }else if(answer.selection==="view all departments"){
+            viewDepartments()
+        }else if(answer.selection==="view all roles"){
+            viewRoles()
+        }else if(answer.selection==="add a department"){
+            addDepartment()
+        }else if(answer.selection==="add a role"){
+            addRole()
         }
     })
 }
@@ -97,7 +105,66 @@ function updateEmployeeRole(){
                     choices: employeeData
                 }
             ]).then(answer=>{
-                db.query("UPDATE employee SET role_id=? WHERE id=?",[answer.role_id,answer.employee_id],err=>{
+                db.query("UPDATE employee SET role_id=? WHERE id=?",[answer.role_id,answer.id],err=>{
+                    viewEmployees()
+                })
+            })
+        })
+    })
+}
+
+function viewDepartments(){
+    db.query(`SELECT * FROM department`, (err,data)=>{
+        printTable(data)
+        mainMenu()
+    })
+}
+
+function viewRoles(){
+    db.query(`SELECT * FROM role`, (err,data)=>{
+        printTable(data)
+        mainMenu()
+    })
+}
+
+function addDepartment(){
+    db.query("SELECT id as value, title as name from department", (err,departmentData)=>{
+            inquirer.prompt([
+                {
+                    type: "input",
+                    message: "What is new department?",
+                    name: "name"
+                }
+            ]).then(answer=>{
+                db.query("INSERT INTO department (name) VALUES(?)",[answer.name],err=>{
+                    viewDepartments()
+                })
+            })
+        })
+}
+
+function addRole(){
+    db.query("SELECT id as value, title as name from role", (err,roleData)=>{
+        db.query("SELECT id as value, as name FROM department", (err, departmentData)=>{
+            inquirer.prompt([
+                {
+                    type: "input",
+                    message: "What is the new role?",
+                    name: "title"
+                },
+                {
+                    type: "input",
+                    message: "What is new role's salary?",
+                    name: "salary"
+                },
+                {
+                    type: "list",
+                    message: "Choose the following department:",
+                    name: "department_id",
+                    choices: departmentData
+                }
+            ]).then(answer=>{
+                db.query("INSERT INTO role (title,salart,department_id) VALUES(?,?,?)",[answer.title,answer.salary, answer.department_id],err=>{
                     viewEmployees()
                 })
             })
