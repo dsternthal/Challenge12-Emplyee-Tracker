@@ -105,7 +105,7 @@ function updateEmployeeRole(){
                     choices: employeeData
                 }
             ]).then(answer=>{
-                db.query("UPDATE employee SET role_id=? WHERE id=?",[answer.role_id,answer.id],err=>{
+                db.query("UPDATE employee SET role_id=? WHERE id=?",[answer.role_id,answer.employee_id],err=>{
                     viewEmployees()
                 })
             })
@@ -144,7 +144,7 @@ function addDepartment(){
 }
 
 function addRole(){
-    db.query("SELECT id as value, department_id as name from role", (err,roleData)=>{
+    db.query("SELECT id as value, id as name from role", (err,roleData)=>{
             inquirer.prompt([
                 {
                     type: "input",
@@ -159,7 +159,7 @@ function addRole(){
                 {
                     type: "list",
                     message: "Choose the following department:",
-                    name: "department_id",
+                    name: "department",
                     choices: roleData
                 }
             ]).then(answer=>{
