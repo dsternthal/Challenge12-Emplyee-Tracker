@@ -144,8 +144,7 @@ function addDepartment(){
 }
 
 function addRole(){
-    db.query("SELECT id as value, title as name from role", (err,roleData)=>{
-        db.query("SELECT id as value, as name FROM department", (err, departmentData)=>{
+    db.query("SELECT id as value, department_id as name from role", (err,roleData)=>{
             inquirer.prompt([
                 {
                     type: "input",
@@ -161,13 +160,12 @@ function addRole(){
                     type: "list",
                     message: "Choose the following department:",
                     name: "department_id",
-                    choices: departmentData
+                    choices: roleData
                 }
             ]).then(answer=>{
-                db.query("INSERT INTO role (title,salart,department_id) VALUES(?,?,?)",[answer.title,answer.salary, answer.department_id],err=>{
+                db.query("INSERT INTO role (title,salary,department_id) VALUES(?,?,?)",[answer.title,answer.salary, answer.department_id],err=>{
                     viewEmployees()
                 })
             })
         })
-    })
-}
+    }
